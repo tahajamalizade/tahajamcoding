@@ -4,14 +4,19 @@
       id="header"
       style="height: 60px; position: fixed; width: 100%; z-index: 22"
     >
-      <a style="color: rebeccapurple">Shop</a>
+      <div style="cursor: pointer">
+        <router-link class="home" to="/">home</router-link>
+      </div>
 
       <div>
         <ul class="navbar">
-          <li><a @click="goHome">Home</a></li>
-          <li><a @click="goProduct">Product</a></li>
-          <li><a @click="goCart">Cart</a></li>
-          <li><a @click="goCheckout">Checkout</a></li>
+          <li style="padding: 0px;">
+            <router-link class="product" to="/product">product</router-link>
+          </li>
+          <li><router-link class="cart" to="/cart">cart</router-link></li>
+          <li>
+            <router-link class="checkout" to="/checkout">checkout</router-link>
+          </li>
         </ul>
       </div>
     </section>
@@ -21,24 +26,11 @@
   </q-layout>
 </template>
 
-<script>
-export default {
-  name: "MainLayout",
-  methods: {
-    goHome() {
-      this.$router.push("/");
-    },
-    goProduct() {
-      this.$router.push("/product");
-    },
-    goCart() {
-      this.$router.push("/cart");
-    },
-    goCheckout() {
-      this.$router.push("/checkout");
-    },
-  },
-};
+<script setup>
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
 </script>
 
 <style lang="scss">
@@ -53,6 +45,14 @@ body {
   padding: 20px 80px;
   background-color: #e3e6f6;
   box-shadow: 0 15px 15px rgba(0, 0, 0, 0.06);
+  .home {
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    transition: 0.8s ease;
+    cursor: pointer;
+  }
   .navbar {
     display: flex;
     align-items: center;
@@ -70,6 +70,7 @@ body {
     font-weight: 600;
     color: #1a1a1a;
     transition: 0.8s ease;
+    cursor: pointer;
   }
   .navbar li a:hover,
   .navbar li a.active {

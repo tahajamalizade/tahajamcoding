@@ -12,22 +12,14 @@
 
     <div class="product">
       <ProductCart></ProductCart>
-      <ProductCart></ProductCart>
-      <ProductCart></ProductCart>
-      <ProductCart></ProductCart>
-      <ProductCart></ProductCart>
-      <ProductCart></ProductCart>
-      <ProductCart></ProductCart>
-      <ProductCart></ProductCart>
-      <ProductCart></ProductCart>
-      <ProductCart></ProductCart>
+     
     </div>
   </q-page>
 </template>
 
 <script>
-import dropDown from "./components/dropDown.vue";
-import ProductCart from "./components/ProductCart.vue";
+import dropDown from "/home/taha/Documents/shopesite2/src/components/dropDown.vue";
+import ProductCart from "/home/taha/Documents/shopesite2/src/components/ProductCart.vue";
 export default {
   name: "IndexPage",
   components: {
