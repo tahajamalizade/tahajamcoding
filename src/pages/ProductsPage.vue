@@ -61,7 +61,7 @@ const goPage = () => {
   router.push(`/products`);
 };
 
-// TODO: Products list
+// TODO: Products listt
 const products = ref([
   {
     id: 1,
