@@ -49,11 +49,10 @@ const category = ref(route.query.category || null);
 watch(
   () => route.query.category,
   (newCategory) => {
-    category.value = newCategory; // Update category when query changes
+    category.value = newCategory;
   }
 );
 
-// Function to update the query parameter when a category is clicked
 const changequery = (newCategory) => {
   router.push({ query: { category: newCategory } });
 };
@@ -114,10 +113,9 @@ const products = ref([
   },
 ]);
 
-// Dynamically filter products based on the current category
 const filteredProducts = computed(() => {
   if (!category.value) {
-    return products.value; // Show all products if no category is selected
+    return products.value;
   }
   return products.value.filter(
     (product) => product.category === category.value
