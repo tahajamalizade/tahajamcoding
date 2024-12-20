@@ -1,5 +1,5 @@
 <template>
-    <div class="q-pa-md">
+    <div class="q-pa-sm">
       <q-btn-dropdown rounded color="teal" label="Dropdown Button" class="border-radius">
         <q-list>
           <q-item clickable v-close-popup @click="onItemClick">

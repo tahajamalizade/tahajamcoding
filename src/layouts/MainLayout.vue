@@ -1,17 +1,14 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <section
-      id="header"
-      style="height: 60px; position: fixed; width: 100%; z-index: 22"
-    >
+    <section id="header">
       <div style="cursor: pointer">
         <router-link class="home" to="/">home</router-link>
       </div>
 
       <div>
         <ul class="navbar">
-          <li style="padding: 0px;">
-            <router-link class="product" to="/product">product</router-link>
+          <li style="padding: 0px">
+            <router-link class="product" to="/products">products</router-link>
           </li>
           <li><router-link class="cart" to="/cart">cart</router-link></li>
           <li>
@@ -39,13 +36,16 @@ body {
 }
 
 #header {
+  position: sticky;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 20px 80px;
   background-color: #e3e6f6;
   box-shadow: 0 15px 15px rgba(0, 0, 0, 0.06);
-  .home {
+  // position: fixed;
+  height: 60px;
+  over .home {
     text-decoration: none;
     font-size: 16px;
     font-weight: 600;
@@ -59,12 +59,15 @@ body {
     justify-content: center;
     color: black;
   }
+  .product {
+    padding: 0px;
+  }
   .navbar li {
     list-style: none;
     padding: 0px 20px;
     position: relative;
   }
-  .navbar li a {
+  .navbar li a , .home {
     text-decoration: none;
     font-size: 16px;
     font-weight: 600;

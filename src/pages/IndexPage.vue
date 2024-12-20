@@ -3,30 +3,66 @@
     <header>
       <div class="header"></div>
     </header>
-    <div class="droplayout">
+    <!-- <div class="droplayout">
       <dropDown></dropDown>
       <dropDown></dropDown>
       <dropDown></dropDown>
-    </div>
+    </div> -->
     <div class="title"><h4>new products</h4></div>
 
     <div class="product">
-      <ProductCart></ProductCart>
-     
+      <ProductCart
+        v-for="product in products"
+        :key="product.id"
+        :product="product"
+      />
     </div>
   </q-page>
 </template>
 
-<script>
+<script setup>
+import { ref } from "vue";
 import dropDown from "/home/taha/Documents/shopesite2/src/components/dropDown.vue";
 import ProductCart from "/home/taha/Documents/shopesite2/src/components/ProductCart.vue";
-export default {
-  name: "IndexPage",
-  components: {
-    dropDown,
-    ProductCart,
+import { info } from "autoprefixer";
+
+const products = ref([
+  {
+    id: 1,
+    name: "jeans",
+    price: "10$",
+    image: "../src/assets/jeans.jpeg",
+    info: "loremdaddkkrrfawdwooeoeoecp34-r-sddqwewdsffvdslwerf;dsdewlfgmgtjigeropsfd'asaelellelelelleekftr",
   },
-};
+  {
+    id: 2,
+    name: "Tshirt",
+    price: "20$",
+    image: "../src/assets/tshirt.jpeg",
+    info: "loremdaddkkrrfawdwooeoeoecp34-r-sddqwewdsffvdslwerf;dsdewlfgmgtjigeropsfd'asaelellelelelleekftr",
+  },
+  {
+    id: 3,
+    name: "shirt",
+    price: "40$",
+    image: "../src/assets/shirt.jpeg",
+    info: "loremdaddkkrrfawdwooeoeoecp34-r-sddqwewdsffvdslwerf;dsdewlfgmgtjigeropsfd'asaelellelelelleekftr",
+  },
+  {
+    id: 4,
+    name: "gloves",
+    price: "50$",
+    image: "../src/assets/gloves.jpeg",
+    info: "loremdaddkkrrfawdwooeoeoecp34-r-sddqwewdsffvdslwerf;dsdewlfgmgtjigeropsfd'asaelellelelelleekftr",
+  },
+  {
+    id: 5,
+    name: "socks",
+    price: "50$",
+    image: "../src/assets/socks.jpeg",
+    info: "loremdaddkkrrfawdwooeoeoecp34-r-sddqwewdsffvdslwerf;dsdewlfgmgtjigeropsfd'asaelellelelelleekftr",
+  },
+]);
 </script>
 
 <style lang="scss">
