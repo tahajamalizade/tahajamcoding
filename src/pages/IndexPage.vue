@@ -3,11 +3,7 @@
     <header>
       <div class="header"></div>
     </header>
-    <!-- <div class="droplayout">
-      <dropDown></dropDown>
-      <dropDown></dropDown>
-      <dropDown></dropDown>
-    </div> -->
+
     <div class="title"><h4>new products</h4></div>
 
     <div class="product">
@@ -22,8 +18,8 @@
 
 <script setup>
 import { ref } from "vue";
-import dropDown from "/home/taha/Documents/shopesite2/src/components/dropDown.vue";
-import ProductCart from "/home/taha/Documents/shopesite2/src/components/ProductCart.vue";
+import dropDown from "src/components/dropDown.vue";
+import ProductCart from "src/components/ProductCart.vue";
 import { info } from "autoprefixer";
 
 const products = ref([

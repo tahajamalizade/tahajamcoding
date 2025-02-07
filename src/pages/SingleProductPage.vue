@@ -42,7 +42,7 @@
         <h5 style="margin: 0%">133$</h5>
 
         <br />
-        <q-btn align="center" class="btn-fixed-width" label="Align to right" />
+        <q-btn align="center" class="btn-fixed-width" label="add to Checkoyt" />
       </div>
     </div>
   </q-page>

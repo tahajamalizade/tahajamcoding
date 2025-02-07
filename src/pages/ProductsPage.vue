@@ -139,8 +139,8 @@ const categories = ["pants", "shirts", "socks"];
 .products {
   display: flex;
   flex-wrap: wrap;
-  // align-items: flex-end;
-  justify-content: space-between;
+  align-items: flex-end;
+  justify-content: start;
   gap: 1em;
   padding: 30px;
 }
