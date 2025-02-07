@@ -14,20 +14,28 @@
         <tbody>
           <tr v-for="(item, index) in cart" :key="item.id">
             <td class="product-info">
-              <!-- <img :src="item.image" alt="Product Image" class="product-img" /> -->
               <div>
                 <strong>{{ item.name }}</strong>
                 <p>{{ item.color }} | {{ item.size }}</p>
               </div>
             </td>
             <td>
-              <button @click="updateQuantity(index, item.quantity - 1)" :disabled="item.quantity <= 1">-</button>
+              <button
+                @click="updateQuantity(index, item.quantity - 1)"
+                :disabled="item.quantity <= 1"
+              >
+                -
+              </button>
               <span>{{ item.quantity }}</span>
-              <button @click="updateQuantity(index, item.quantity + 1)">+</button>
+              <button @click="updateQuantity(index, item.quantity + 1)">
+                +
+              </button>
             </td>
             <td>${{ (item.price * item.quantity).toFixed(2) }}</td>
             <td>
-              <button @click="removeItem(index)" class="remove-btn">Remove</button>
+              <button @click="removeItem(index)" class="remove-btn">
+                Remove
+              </button>
             </td>
           </tr>
         </tbody>
@@ -36,7 +44,9 @@
       <div class="summary">
         <p><strong>Subtotal:</strong> ${{ subtotal.toFixed(2) }}</p>
         <p><strong>Discount:</strong> $0.00</p>
-        <p class="grand-total"><strong>Grand Total:</strong> ${{ subtotal.toFixed(2) }}</p>
+        <p class="grand-total">
+          <strong>Grand Total:</strong> ${{ subtotal.toFixed(2) }}
+        </p>
         <button class="checkout-btn">Checkout Now</button>
       </div>
     </div>
@@ -48,15 +58,39 @@ export default {
   data() {
     return {
       cart: [
-        { id: 1, name: "Cardigan", color: "Green", size: "M", price: 2500, quantity: 1, image: "shopesite2/src/assets/sweeter/swaterrr.jpeg" },
-        { id: 2, name: "Cahier Leather Shoulder Bag", color: "Grey", size: "", price: 2500, quantity: 1, image: "shopesite2/src/assets/sweeter/wwwwww.jpeg" },
-        { id: 3, name: "Nordgreen Watches", color: "Brown", size: "M", price: 2500, quantity: 1, image: "shopesite2/src/assets/jeans.jpeg" },
+        {
+          id: 1,
+          name: "Cardigan",
+          color: "Green",
+          size: "M",
+          price: 2500,
+          quantity: 1,
+        },
+        {
+          id: 2,
+          name: "Cahier Leather Shoulder Bag",
+          color: "Grey",
+          size: "",
+          price: 2500,
+          quantity: 1,
+        },
+        {
+          id: 3,
+          name: "Nordgreen Watches",
+          color: "Brown",
+          size: "M",
+          price: 2500,
+          quantity: 1,
+        },
       ],
     };
   },
   computed: {
     subtotal() {
-      return this.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      return this.cart.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      );
     },
   },
   methods: {
@@ -97,7 +131,8 @@ table {
   width: 100%;
   border-collapse: collapse;
 }
-th, td {
+th,
+td {
   padding: 10px;
   text-align: left;
   border-bottom: 1px solid #ddd;
