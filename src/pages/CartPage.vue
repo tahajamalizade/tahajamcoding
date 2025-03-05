@@ -40,7 +40,7 @@
           </tr>
         </tbody>
       </table>
-      <!-- cddss -->
+
 
       <div class="summary">
         <p><strong>Subtotal:</strong> ${{ subtotal.toFixed(2) }}</p>
@@ -77,7 +77,7 @@ export default {
         },
         {
           id: 3,
-          name: "Nordgreen Watches",
+          name: " Watches",
           color: "Brown",
           size: "M",
           price: 2500,
