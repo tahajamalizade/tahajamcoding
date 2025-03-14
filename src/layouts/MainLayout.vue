@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="lHh Lpr lFf" style="background-color: #fffaf0w;">
     <section id="header">
       <div style="cursor: pointer">
         <router-link class="home" to="/">home</router-link>
@@ -14,6 +14,9 @@
           <li>
             <router-link class="checkout" to="/checkout">checkout</router-link>
           </li>
+          <li>
+            <router-link class="signin" to="/signIn">Sign In</router-link>
+          </li>
         </ul>
       </div>
     </section>
@@ -27,7 +30,6 @@
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-
 </script>
 
 <style lang="scss">
@@ -41,9 +43,10 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 20px 80px;
-  background-color: #e3e6f6;
+  background-color: #dce9dc;
   box-shadow: 0 15px 15px rgba(0, 0, 0, 0.06);
-  // position: fixed;
+  border-bottom: #e0e0e0 5px solid;
+  border-radius: 5px;
   height: 60px;
   over .home {
     text-decoration: none;
@@ -58,16 +61,21 @@ body {
     align-items: center;
     justify-content: center;
     color: black;
+    .signin {
+      background-color: #83f28f;
+      padding: 5px;
+      border: #52d46863 solid 3px;
+      border-radius: 15px;
+    }
   }
-  .product {
-    padding: 0px;
-  }
+
   .navbar li {
     list-style: none;
     padding: 0px 20px;
     position: relative;
   }
-  .navbar li a , .home {
+  .navbar li a,
+  .home {
     text-decoration: none;
     font-size: 16px;
     font-weight: 600;
@@ -79,15 +87,16 @@ body {
   .navbar li a.active {
     color: #088178;
   }
-  .navbar li a.active::after,
-  .navbar li a:hover::after {
-    content: "";
-    width: 30%;
-    height: 2px;
-    background-color: #000000;
-    position: absolute;
-    bottom: -4px;
-    left: 20px;
-  }
+
+  // .navbar li a.active::after,
+  // .navbar li a:hover::after {
+  //   content: "";
+  //   width: 30%;
+  //   height: 2px;
+  //   background-color: #000000;
+  //   position: absolute;
+  //   bottom: -4px;
+  //   left: 20px;
+  // }
 }
 </style>
