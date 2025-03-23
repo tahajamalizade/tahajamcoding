@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf" style="background-color: #fffaf0w;">
+  <q-layout view="lHh Lpr lFf" style="background-color: #fffaf0;">
     <section id="header">
       <div style="cursor: pointer">
         <router-link class="home" to="/">home</router-link>

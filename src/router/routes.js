@@ -15,7 +15,7 @@ const routes = [
       { path: "/cart", component: () => import("pages/CartPage.vue") },
       { path: "/checkout", component: () => import("pages/CheckOut.vue") },
       { path: "/SignIn", component: () => import("pages/SignIn.vue") },
-
+      { path: "/admin", component: () => import("pages/adminPage.vue") },
     ],
   },
 
