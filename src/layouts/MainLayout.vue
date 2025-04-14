@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf" style="background-color: #fffaf0;">
+  <q-layout view="lHh Lpr lFf" style="background-color: #fffaf0">
     <section id="header">
       <div style="cursor: pointer">
         <router-link class="home" to="/">home</router-link>
@@ -15,10 +15,109 @@
             <router-link class="checkout" to="/checkout">checkout</router-link>
           </li>
           <li>
-            <router-link class="signin" to="/signIn">Sign In</router-link>
+            <q-btn class="signin" label="sign in" @click="prompt = true" />
+          </li>
+          <li>
+            <q-btn class="signin" label="sign up" @click="signupModal = true" />
           </li>
         </ul>
       </div>
+      <q-dialog v-model="prompt" persistent>
+        <q-card
+          style="
+            min-width: 350px;
+            background-color: #f0fff4;
+            border: 2px solid #98f5e1;
+            border-radius: 16px;
+          "
+        >
+          <q-card-section
+            style="background-color: #c6f6d5; border-bottom: 1px solid #98f5e1"
+          >
+            <div class="text-h6 text-center text-black">have an acount?</div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <q-input
+              dense
+              v-model="name"
+              label="Name"
+              color="black"
+              autofocus
+              class="q-mb-sm"
+              input-style="background-color: white; border-radius: 8px"
+              @keyup.enter="prompt = false"
+            />
+
+            <q-input
+              dense
+              v-model="email"
+              label="Email"
+              color="black"
+              input-style="background-color: white; border-radius: 8px"
+              @keyup.enter="prompt = false"
+            />
+          </q-card-section>
+
+          <q-card-actions
+            align="right"
+            class="text-black"
+            style="background-color: #e6fffa; border-top: 1px solid #98f5e1"
+          >
+            <q-btn flat label="Cancel" color="black" v-close-popup />
+            <q-btn flat label="Sign In" color="mint" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+      <!-- TODO: -->
+      <q-dialog v-model="signupModal" persistent>
+        <q-card
+          style="
+            min-width: 350px;
+            background-color: #f0fff4;
+            border: 2px solid #98f5e1;
+            border-radius: 16px;
+          "
+        >
+          <q-card-section
+            style="background-color: #c6f6d5; border-bottom: 1px solid #98f5e1"
+          >
+            <div class="text-h6 text-center text-black">Create an Account</div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <q-input
+              dense
+              v-model="name"
+              label="Name"
+              color="black"
+              autofocus
+              class="q-mb-sm"
+              input-style="background-color: white; border-radius: 8px"
+              @keyup.enter="signup = false"
+            />
+
+            <q-input
+              dense
+              v-model="email"
+              label="Email"
+              color="black"
+              input-style="background-color: white; border-radius: 8px"
+              @keyup.enter="signup = false"
+            />
+          </q-card-section>
+
+          <q-card-actions
+            align="right"
+            class="text-black"
+            style="background-color: #e6fffa; border-top: 1px solid #98f5e1"
+          >
+            <q-btn flat label="Cancel" color="black" v-close-popup />
+            <q-btn flat label="Create Account" color="mint" @click="signup" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </section>
     <q-page-container>
       <router-view />
@@ -28,8 +127,32 @@
 
 <script setup>
 import { useRouter } from "vue-router";
+import { ref } from "vue";
+import { api } from "src/boot/axios";
 
 const router = useRouter();
+
+// ✅ Declare the reactive properties
+const prompt = ref(false);
+const name = ref("");
+const email = ref("");
+const password = ref("");
+
+// TODO:
+const signupModal = ref(false);
+
+const signup = async () => {
+  try {
+    await api.post("/auth/signup", {
+      username: name.value,
+      email: email.value,
+      password: password.value,
+    });
+  } catch (err) {
+    console.error(err);
+    alert("Signup failed");
+  }
+};
 </script>
 
 <style lang="scss">

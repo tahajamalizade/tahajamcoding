@@ -32,19 +32,24 @@
 
 <script setup>
 import { ref } from 'vue';
+import { api } from 'boot/axios';
 import { useRouter } from 'vue-router';
 
-const router = useRouter();
-const username = ref('');
+const email = ref('');
 const password = ref('');
-const errorMessage = ref('');
+const router = useRouter();
 
-const handleLogin = () => {
-  if (username.value === 'a' && password.value === 'aa') {
-    localStorage.setItem('isAdmin', 'true');
-    router.push('/admin');
-  } else {
-    errorMessage.value = 'Invalid credentials!';
+const login = async () => {
+  try {
+    const res = await api.post('/auth/login', {
+      email: email.value,
+      password: password.value
+    });
+    localStorage.setItem('token', res.data.token);
+    router.push('/products'); // or your desired route
+  } catch (err) {
+    console.error(err);
+    alert('Login failed');
   }
 };
 </script>

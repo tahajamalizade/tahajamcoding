@@ -34,8 +34,9 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { api } from "boot/axios";
 
 import ProductCart from "src/components/ProductCart.vue";
 
@@ -61,57 +62,16 @@ const goPage = () => {
   router.push(`/products`);
 };
 
-// TODO: Products listt
-const products = ref([
-  {
-    id: 1,
-    name: "jeans",
-    price: "10$",
-    image: "../src/assets/jeans.jpeg",
-    info: "Sample description for jeans",
-    category: "pants",
-  },
-  {
-    id: 2,
-    name: "Tshirt",
-    price: "20$",
-    image: "../src/assets/tshirt.jpeg",
-    info: "Sample description for Tshirt",
-    category: "shirts",
-  },
-  {
-    id: 3,
-    name: "shirt",
-    price: "40$",
-    image: "../src/assets/shirt.jpeg",
-    info: "Sample description for shirt",
-    category: "shirts",
-  },
-  {
-    id: 4,
-    name: "gloves",
-    price: "50$",
-    image: "../src/assets/gloves.jpeg",
-    info: "Sample description for gloves",
-    category: "shirts",
-  },
-  {
-    id: 5,
-    name: "socks",
-    price: "50$",
-    image: "../src/assets/socks.jpeg",
-    info: "Sample description for socks",
-    category: "socks",
-  },
-  {
-    id: 6,
-    name: "socks",
-    price: "50$",
-    image: "../src/assets/socks.jpeg",
-    info: "Sample description for socks",
-    category: "socks",
-  },
-]);
+const products = ref([]);
+
+onMounted(async () => {
+  try {
+    const res = await api.get("/products");
+    products.value = res.data;
+  } catch (err) {
+    console.error("Error loading products:", err);
+  }
+});
 
 const filteredProducts = computed(() => {
   if (!category.value) {
