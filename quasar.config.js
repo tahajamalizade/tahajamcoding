@@ -8,6 +8,7 @@
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
+const { Notify } = require("quasar");
 const { configure } = require("quasar/wrappers");
 
 module.exports = configure(function (/* ctx */) {
@@ -97,7 +98,7 @@ module.exports = configure(function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: [],
+      plugins: ["Notify"],
     },
 
     // animations: 'all', // --- includes all animations
@@ -111,7 +112,7 @@ module.exports = configure(function (/* ctx */) {
     //   store: 'src/store/index',
     //   registerServiceWorker: 'src-pwa/register-service-worker',
     //   serviceWorker: 'src-pwa/custom-service-worker',
-    //   pwaManifestFile: 'src-pwa/manifest.json',
+    //   pwaManifestFile: w'src-pwa/manifest.json',
     //   electronMain: 'src-electron/electron-main',
     //   electronPreload: 'src-electron/electron-preload'
     // },

@@ -22,6 +22,8 @@
           </li>
         </ul>
       </div>
+
+      <!-- Sign In Dialog -->
       <q-dialog v-model="prompt" persistent>
         <q-card
           style="
@@ -34,28 +36,35 @@
           <q-card-section
             style="background-color: #c6f6d5; border-bottom: 1px solid #98f5e1"
           >
-            <div class="text-h6 text-center text-black">have an acount?</div>
+            <div class="text-h6 text-center text-black">Have an account?</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
             <q-input
               dense
-              v-model="name"
+              v-model="firstName"
               label="Name"
               color="black"
               autofocus
               class="q-mb-sm"
               input-style="background-color: white; border-radius: 8px"
-              @keyup.enter="prompt = false"
             />
 
             <q-input
               dense
-              v-model="email"
-              label="Email"
+              v-model="createPassword"
+              label="Password"
               color="black"
+              type="password"
               input-style="background-color: white; border-radius: 8px"
-              @keyup.enter="prompt = false"
+            />
+            <q-input
+              dense
+              v-model="confirmPassword"
+              label="Confirm Password"
+              color="black"
+              type="password"
+              input-style="background-color: white; border-radius: 8px"
             />
           </q-card-section>
 
@@ -65,12 +74,12 @@
             style="background-color: #e6fffa; border-top: 1px solid #98f5e1"
           >
             <q-btn flat label="Cancel" color="black" v-close-popup />
-            <q-btn flat label="Sign In" color="mint" v-close-popup />
+            <q-btn flat label="Sign In" color="mint" @click="signin" />
           </q-card-actions>
         </q-card>
       </q-dialog>
 
-      <!-- TODO: -->
+      <!-- Sign Up Dialog -->
       <q-dialog v-model="signupModal" persistent>
         <q-card
           style="
@@ -95,16 +104,26 @@
               autofocus
               class="q-mb-sm"
               input-style="background-color: white; border-radius: 8px"
-              @keyup.enter="signup = false"
+              @keyup.enter="signup"
             />
 
             <q-input
               dense
-              v-model="email"
-              label="Email"
+              v-model="password"
+              label="Password"
               color="black"
+              type="password"
               input-style="background-color: white; border-radius: 8px"
-              @keyup.enter="signup = false"
+              @keyup.enter="signup"
+            />
+            <q-input
+              dense
+              v-model="confirm"
+              label="Confirm Password"
+              color="black"
+              type="password"
+              input-style="background-color: white; border-radius: 8px"
+              @keyup.enter="signup"
             />
           </q-card-section>
 
@@ -119,6 +138,7 @@
         </q-card>
       </q-dialog>
     </section>
+
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -126,32 +146,85 @@
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
 import { ref } from "vue";
-import { api } from "src/boot/axios";
+import { useQuasar } from "quasar";
+import SignIn from "src/pages/SignIn.vue";
 
-const router = useRouter();
+const $q = useQuasar();
 
-// ✅ Declare the reactive properties
-const prompt = ref(false);
-const name = ref("");
-const email = ref("");
-const password = ref("");
-
-// TODO:
+// Dialog state
 const signupModal = ref(false);
+const prompt = ref(false);
 
-const signup = async () => {
-  try {
-    await api.post("/auth/signup", {
-      username: name.value,
-      email: email.value,
-      password: password.value,
+// Sign In fields
+const firstName = ref("");
+const createPassword = ref("");
+const confirmPassword = ref("");
+
+// Sign Up fields
+const name = ref("");
+const password = ref("");
+const confirm = ref("");
+
+const signup = () => {
+  if (password.value.length < 8) {
+    $q.notify({
+      type: "negative",
+      message: "Password must be at least 8 characters long.",
     });
-  } catch (err) {
-    console.error(err);
-    alert("Signup failed");
+    return;
   }
+  if (confirm.value === "") {
+    $q.notify({
+      type: "negative",
+      message: "please confirm the password.",
+    });
+  }
+
+  if (password.value !== confirm.value) {
+    $q.notify({
+      type: "negative",
+      message: "Passwords do not match.",
+    });
+    return;
+  }
+
+  $q.notify({
+    type: "positive",
+    message: "Account created successfully!",
+  });
+
+  signupModal.value = false;
+};
+const signin = () => {
+  if (createPassword.value.length < 8) {
+    $q.notify({
+      type: "negative",
+      message: "Password must be at least 8 characters long.",
+    });
+    return;
+  }
+  if (confirmPassword.value === "") {
+    $q.notify({
+      type: "#",
+      message: "please confirm the password.",
+    });
+  }
+
+  if (createPassword.value !== confirm.value) {
+    $q.notify({
+      type: "negative",
+      message: "Passwords do not match.",
+    });
+    return;
+  }
+
+  $q.notify({
+    type: "positive",
+    message: "Account created successfully!",
+  });
+
+  signupModal.value = false;
 };
 </script>
 
@@ -171,19 +244,13 @@ body {
   border-bottom: #e0e0e0 5px solid;
   border-radius: 5px;
   height: 60px;
-  over .home {
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 600;
-    color: #1a1a1a;
-    transition: 0.8s ease;
-    cursor: pointer;
-  }
+
   .navbar {
     display: flex;
     align-items: center;
     justify-content: center;
     color: black;
+
     .signin {
       background-color: #83f28f;
       padding: 5px;
@@ -197,6 +264,7 @@ body {
     padding: 0px 20px;
     position: relative;
   }
+
   .navbar li a,
   .home {
     text-decoration: none;
@@ -206,20 +274,10 @@ body {
     transition: 0.8s ease;
     cursor: pointer;
   }
+
   .navbar li a:hover,
   .navbar li a.active {
     color: #088178;
   }
-
-  // .navbar li a.active::after,
-  // .navbar li a:hover::after {
-  //   content: "";
-  //   width: 30%;
-  //   height: 2px;
-  //   background-color: #000000;
-  //   position: absolute;
-  //   bottom: -4px;
-  //   left: 20px;
-  // }
 }
 </style>
