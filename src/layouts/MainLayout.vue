@@ -14,128 +14,46 @@
           <li>
             <router-link class="checkout" to="/checkout">checkout</router-link>
           </li>
-          <li>
+          <li v-if="token">
+            <!-- <router-link class="checkout" to="/profile">profile</router-link> -->
+            <q-btn color="secondary" label=" profile">
+              <q-menu auto-close>
+                <q-list style="min-width: 100px">
+                  <q-item clickable @click.stop="edit = true">
+                    <q-item-section>
+                      <q-btn> Edit Profile </q-btn>
+                    </q-item-section>
+                  </q-item>
+                  <q-item clickable>
+                    <q-item-section>
+                      <q-btn @click="logOut"> log out</q-btn>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-menu>
+            </q-btn>
+          </li>
+          <li v-if="!token">
             <q-btn class="signin" label="sign in" @click="prompt = true" />
           </li>
-          <li>
+          <li v-if="!token">
             <q-btn class="signin" label="sign up" @click="signupModal = true" />
           </li>
         </ul>
       </div>
 
+      <q-dialog v-model="edit">
+        <profile />
+      </q-dialog>
+
       <!-- Sign In Dialog -->
-      <q-dialog v-model="prompt" persistent>
-        <q-card
-          style="
-            min-width: 350px;
-            background-color: #f0fff4;
-            border: 2px solid #98f5e1;
-            border-radius: 16px;
-          "
-        >
-          <q-card-section
-            style="background-color: #c6f6d5; border-bottom: 1px solid #98f5e1"
-          >
-            <div class="text-h6 text-center text-black">Have an account?</div>
-          </q-card-section>
-
-          <q-card-section class="q-pt-none">
-            <q-input
-              dense
-              v-model="firstName"
-              label="Name"
-              color="black"
-              autofocus
-              class="q-mb-sm"
-              input-style="background-color: white; border-radius: 8px"
-            />
-
-            <q-input
-              dense
-              v-model="createPassword"
-              label="Password"
-              color="black"
-              type="password"
-              input-style="background-color: white; border-radius: 8px"
-            />
-            <q-input
-              dense
-              v-model="confirmPassword"
-              label="Confirm Password"
-              color="black"
-              type="password"
-              input-style="background-color: white; border-radius: 8px"
-            />
-          </q-card-section>
-
-          <q-card-actions
-            align="right"
-            class="text-black"
-            style="background-color: #e6fffa; border-top: 1px solid #98f5e1"
-          >
-            <q-btn flat label="Cancel" color="black" v-close-popup />
-            <q-btn flat label="Sign In" color="mint" @click="signin" />
-          </q-card-actions>
-        </q-card>
+      <q-dialog v-model="prompt">
+        <SignIn />
       </q-dialog>
 
       <!-- Sign Up Dialog -->
-      <q-dialog v-model="signupModal" persistent>
-        <q-card
-          style="
-            min-width: 350px;
-            background-color: #f0fff4;
-            border: 2px solid #98f5e1;
-            border-radius: 16px;
-          "
-        >
-          <q-card-section
-            style="background-color: #c6f6d5; border-bottom: 1px solid #98f5e1"
-          >
-            <div class="text-h6 text-center text-black">Create an Account</div>
-          </q-card-section>
-
-          <q-card-section class="q-pt-none">
-            <q-input
-              dense
-              v-model="name"
-              label="Name"
-              color="black"
-              autofocus
-              class="q-mb-sm"
-              input-style="background-color: white; border-radius: 8px"
-              @keyup.enter="signup"
-            />
-
-            <q-input
-              dense
-              v-model="password"
-              label="Password"
-              color="black"
-              type="password"
-              input-style="background-color: white; border-radius: 8px"
-              @keyup.enter="signup"
-            />
-            <q-input
-              dense
-              v-model="confirm"
-              label="Confirm Password"
-              color="black"
-              type="password"
-              input-style="background-color: white; border-radius: 8px"
-              @keyup.enter="signup"
-            />
-          </q-card-section>
-
-          <q-card-actions
-            align="right"
-            class="text-black"
-            style="background-color: #e6fffa; border-top: 1px solid #98f5e1"
-          >
-            <q-btn flat label="Cancel" color="black" v-close-popup />
-            <q-btn flat label="Create Account" color="mint" @click="signup" />
-          </q-card-actions>
-        </q-card>
+      <q-dialog v-model="signupModal">
+        <SignUp />
       </q-dialog>
     </section>
 
@@ -146,85 +64,26 @@
 </template>
 
 <script setup>
+import profile from "src/components/profilePage.vue";
+import SignIn from "src/pages/SignIn.vue";
+import signUp from "src/pages/signUp.vue";
 import { ref } from "vue";
 import { useQuasar } from "quasar";
-import SignIn from "src/pages/SignIn.vue";
+import SignUp from "src/pages/signUp.vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
+const token = localStorage.getItem("token");
 
 const $q = useQuasar();
 
 // Dialog state
-const signupModal = ref(false);
 const prompt = ref(false);
+const signupModal = ref(false);
+const edit = ref(false);
 
-// Sign In fields
-const firstName = ref("");
-const createPassword = ref("");
-const confirmPassword = ref("");
-
-// Sign Up fields
-const name = ref("");
-const password = ref("");
-const confirm = ref("");
-
-const signup = () => {
-  if (password.value.length < 8) {
-    $q.notify({
-      type: "negative",
-      message: "Password must be at least 8 characters long.",
-    });
-    return;
-  }
-  if (confirm.value === "") {
-    $q.notify({
-      type: "negative",
-      message: "please confirm the password.",
-    });
-  }
-
-  if (password.value !== confirm.value) {
-    $q.notify({
-      type: "negative",
-      message: "Passwords do not match.",
-    });
-    return;
-  }
-
-  $q.notify({
-    type: "positive",
-    message: "Account created successfully!",
-  });
-
-  signupModal.value = false;
-};
-const signin = () => {
-  if (createPassword.value.length < 8) {
-    $q.notify({
-      type: "negative",
-      message: "Password must be at least 8 characters long.",
-    });
-    return;
-  }
-  if (confirmPassword.value === "") {
-    $q.notify({
-      type: "#",
-      message: "please confirm the password.",
-    });
-  }
-
-  if (createPassword.value !== confirm.value) {
-    $q.notify({
-      type: "negative",
-      message: "Passwords do not match.",
-    });
-    return;
-  }
-
-  $q.notify({
-    type: "positive",
-    message: "Account created successfully!",
-  });
-
-  signupModal.value = false;
+const logOut = () => {
+  localStorage.removeItem("token");
+  window.location.href = "/";
 };
 </script>
 
@@ -263,6 +122,7 @@ body {
     list-style: none;
     padding: 0px 20px;
     position: relative;
+    cursor: pointer;
   }
 
   .navbar li a,

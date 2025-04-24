@@ -10,7 +10,7 @@
     <q-card-section
       style="background-color: #c6f6d5; border-bottom: 1px solid #98f5e1"
     >
-      <div class="text-h6 text-center text-black">Sign In</div>
+      <div class="text-h6 text-center text-black">Create an Account</div>
     </q-card-section>
 
     <q-card-section class="q-pt-none">
@@ -22,8 +22,18 @@
         autofocus
         class="q-mb-sm"
         input-style="background-color: white; border-radius: 8px"
+        @keyup.enter="signup"
       />
 
+      <q-input
+        dense
+        v-model="email"
+        label="email"
+        color="black"
+        type="text"
+        input-style="background-color: white; border-radius: 8px"
+        @keyup.enter="signup"
+      />
       <q-input
         dense
         v-model="password"
@@ -31,21 +41,30 @@
         color="black"
         type="password"
         input-style="background-color: white; border-radius: 8px"
+        @keyup.enter="signup"
       />
-
       <q-input
         dense
-        v-model="confirmPassword"
+        v-model="confirm"
         label="Confirm Password"
         color="black"
         type="password"
         input-style="background-color: white; border-radius: 8px"
+        @keyup.enter="signup"
       /> -->
-      <br>
-      <q-input color="green-8" v-model="username" label="youname" filled >
+      <br />
+      <q-input color="green-8" v-model="username" label="youname" filled>
       </q-input>
-      <br>
-      <q-input color="green-8" v-model="password" label="password" filled :type="isPwd ? 'password' : 'text'">
+      <br />
+      <q-input color="green-8" v-model="email" label="email" filled> </q-input>
+      <br />
+      <q-input
+        color="green-8"
+        v-model="password"
+        label="password"
+        filled
+        :type="isPwd ? 'password' : 'text'"
+      >
         <template v-slot:append>
           <q-icon
             :name="isPwd ? 'visibility_off' : 'visibility'"
@@ -54,8 +73,14 @@
           />
         </template>
       </q-input>
-<!--
-      <q-input color="green-8" v-model="confirmPassword" label="confirm your Password" filled :type="isPwd ? 'password' : 'text'">
+      <br />
+      <q-input
+        color="green-8"
+        v-model="confirm"
+        label="confirm your password"
+        filled
+        :type="isPwd ? 'password' : 'text'"
+      >
         <template v-slot:append>
           <q-icon
             :name="isPwd ? 'visibility_off' : 'visibility'"
@@ -63,7 +88,7 @@
             @click="isPwd = !isPwd"
           />
         </template>
-      </q-input> -->
+      </q-input>
     </q-card-section>
 
     <q-card-actions
@@ -72,7 +97,7 @@
       style="background-color: #e6fffa; border-top: 1px solid #98f5e1"
     >
       <q-btn flat label="Cancel" color="black" v-close-popup />
-      <q-btn flat label="Sign In" color="mint" @click="login" />
+      <q-btn flat label="Create Account" color="mint" @click="signup" />
     </q-card-actions>
   </q-card>
 </template>
@@ -86,19 +111,12 @@ import { useQuasar } from "quasar";
 const $q = useQuasar();
 const router = useRouter();
 const username = ref("");
-const name = ref("");
 const password = ref("");
-const isPwd = ref(true)
+const confirm = ref("");
+const email = ref("");
+const isPwd = ref(true);
 
-const login = async () => {
-  if (!username.value || !password.value) {
-    $q.notify({
-      type: "negative",
-      message: "All fields are required.",
-    });
-    return;
-  }
-
+const signup = async () => {
   if (password.value.length < 8) {
     $q.notify({
       type: "negative",
@@ -106,14 +124,36 @@ const login = async () => {
     });
     return;
   }
+  // if (confirm.value === "") {
+  //   $q.notify({
+  //     type: "negative",
+  //     message: "please confirm the password.",
+  //   });
+  // }
+  if (confirm.value === "") {
+    $q.notify({
+      type: "negative",
+      message: "Please confirm the password.",
+    });
+    return; // <- this was missing
+  }
 
-
+  if (password.value !== confirm.value) {
+    $q.notify({
+      type: "negative",
+      message: "Passwords do not match.",
+    });
+    return;
+  }
 
   try {
-    const res = await api.post("/auth/login", {
-      username: username.value, // ✅ try this
+    const res = await api.post("/auth/signup", {
+      username: username.value,
       password: password.value,
+      email: email.value,
     });
+
+    console.log("response: ", res.data);
 
     localStorage.setItem("token", res.data.token);
 
@@ -122,12 +162,13 @@ const login = async () => {
       message: "Logged in successfully!",
     });
 
-    window.location.href = "/product";
+    window.location.href = "/";
   } catch (err) {
     console.error(err);
     $q.notify({
       type: "negative",
-      message: "Login failed. Please check your credentials.",
+      message:
+        err.response?.data?.message || "Signup failed. Please try again.",
     });
   }
 };

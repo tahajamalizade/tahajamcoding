@@ -15,7 +15,15 @@ const routes = [
       { path: "/cart", component: () => import("pages/CartPage.vue") },
       { path: "/checkout", component: () => import("pages/CheckOut.vue") },
       { path: "/SignIn", component: () => import("pages/SignIn.vue") },
-      { path: "/admin", component: () => import("pages/adminPage.vue") },
+      {
+        path: "/admin",
+        component: () => import("pages/adminPage.vue"),
+        meta: { requiresAdmin: true },
+      },
+      {
+        path: "/profile",
+        component: () => import("src/components/profilePage.vue"),
+      },
     ],
   },
 
