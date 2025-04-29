@@ -7,23 +7,25 @@
       <div class="text-subtitle2">{{ product.price }}</div>
     </q-card-section>
 
-    <q-card-section class="q-pt-none">
-
-    </q-card-section>
+    <q-card-section class="q-pt-none"> </q-card-section>
   </q-card>
 </template>
 <script setup>
-import { ref } from "vue";
+import { ref, defineProps } from "vue";
 import { useRouter } from "vue-router";
 
-const props = defineProps(["product"]);
+const props = defineProps({
+  product: {
+    type: Object,
+    required: true,
+  },
+});
 
 const router = useRouter();
 
 const goToPage = (id) => {
   router.push(`/products/${id}`);
 };
-
 </script>
 
 <style lang="scss">

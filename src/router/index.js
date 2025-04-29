@@ -21,19 +21,10 @@ export default route(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE)
   })
 
-  // Global navigation guard
-  Router.beforeEach((to, from, next) => {
-    const isAdmin = LocalStorage.getItem('isAdmin') // assume this is true/false
+ // Example: check if user is authenticated
+function isAuthenticated() {
+  return !!localStorage.getItem('auth'); // or check your auth logic
+}
 
-    if (to.matched.some(record => record.meta.requiresAdmin)) {
-      if (isAdmin) {
-        next()
-      } else {
-        next('/SignIn') // redirect if not admin
-      }
-    } else {
-      next()
-    }
-  })
   return Router
 })

@@ -1,14 +1,21 @@
 <template>
   <q-layout view="lHh Lpr lFf" style="background-color: #fffaf0">
     <section id="header">
-      <div style="cursor: pointer">
+      <div style="cursor: pointer" clas>
+        <q-btn
+          flat
+          round
+          icon="brightness_4"
+          @click="toggleDarkMode"
+          padding="20px"
+        />
         <router-link class="home" to="/">home</router-link>
       </div>
 
       <div>
         <ul class="navbar">
-          <li style="padding: 0px">
-            <router-link class="product" to="/products">products</router-link>
+          <li>
+            <router-link  to="/products">products</router-link>
           </li>
           <li><router-link class="cart" to="/cart">cart</router-link></li>
           <li>
@@ -67,8 +74,8 @@
 import profile from "src/components/profilePage.vue";
 import SignIn from "src/pages/SignIn.vue";
 import signUp from "src/pages/signUp.vue";
-import { ref } from "vue";
-import { useQuasar } from "quasar";
+import { ref, onMounted } from "vue";
+import { useQuasar, Dark } from "quasar";
 import SignUp from "src/pages/signUp.vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
@@ -85,6 +92,16 @@ const logOut = () => {
   localStorage.removeItem("token");
   window.location.href = "/";
 };
+
+const toggleDarkMode = () => {
+  const newDarkMode = !Dark.isActive;
+  Dark.set(newDarkMode);
+  localStorage.setItem("darkMode", newDarkMode);
+};
+onMounted(() => {
+  const darkMode = localStorage.getItem("darkMode") === "true";
+  Dark.set(darkMode);
+});
 </script>
 
 <style lang="scss">
@@ -138,6 +155,44 @@ body {
   .navbar li a:hover,
   .navbar li a.active {
     color: #088178;
+  }
+}
+//////////////////  dark style
+
+body.body--dark {
+  #header {
+    background-color: #1e1e1e;
+    box-shadow: 0 15px 15px rgba(255, 255, 255, 0.06);
+    border-bottom: #333 5px solid;
+
+    .navbar {
+      color: #e0e0e0;
+
+      .signin {
+        background-color: #4caf50;
+        border: #388e3c solid 3px;
+        color: #ffffff;
+      }
+    }
+
+    .navbar li a,
+    .home {
+      color: #cccccc;
+    }
+
+    .navbar li a:hover,
+    .navbar li a.active {
+      color: #66ffcc;
+    }
+  }
+
+  q-layout {
+    background-color: #121212 !important;
+  }
+
+  q-page-container {
+    background-color: #121212;
+    color: #e0e0e0;
   }
 }
 </style>

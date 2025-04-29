@@ -100,4 +100,39 @@ const products = ref([
   gap: 1em;
   padding: 30px;
 }
+
+///////////////// TODO:    dark theme
+body.body--dark {
+  .header {
+    background: url(../assets/hero.jpg);
+    background-blend-mode: darken;
+    background-color: rgba(0, 0, 0, 0.5);
+    background-size: cover;
+    background-position: center;
+  }
+
+  .title {
+    color: #f0f0f0;
+    background-color: #121212ec;
+
+    h4 {
+      color: inherit;
+    }
+  }
+
+  .product {
+    background-color: #121212;
+    color: #e0e0e0;
+  }
+
+  .categories {
+    background-color: #1a1a1a;
+
+    ul {
+      li {
+        color: #bbbbbb;
+      }
+    }
+  }
+}
 </style>

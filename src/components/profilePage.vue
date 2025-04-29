@@ -9,14 +9,14 @@
     <q-card-section>
       <q-form @submit.prevent="saveProfile">
         <q-input
-        color="purple-12"
+          color="purple-12"
           v-model="user.name"
           label="Name"
           :readonly="!isEditing"
           filled
         />
         <q-input
-        color="purple-12"
+          color="purple-12"
           v-model="user.email"
           label="Email"
           :readonly="!isEditing"
@@ -38,6 +38,7 @@
             type="submit"
             color="secondary"
             icon="save"
+            @click="handleSave"
           />
           <q-btn
             v-if="isEditing"
@@ -60,7 +61,8 @@ import { useQuasar } from "quasar";
 const $q = useQuasar();
 
 const defaultAvatar =
-  "https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg";
+"https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg";
+const showSaveButton = ref(true);
 
 const user = ref({
   name: "",
@@ -69,7 +71,6 @@ const user = ref({
 let originalUser = {};
 
 const isEditing = ref(false);
-
 
 async function saveProfile() {
   console.log("Saving profile...", user.value);
@@ -90,4 +91,9 @@ function cancelEdit() {
   user.value = { ...originalUser };
   isEditing.value = false;
 }
+
+const handleSave = () => {
+  showSaveButton.value = false;
+  window.location.href = "/"; 
+};
 </script>

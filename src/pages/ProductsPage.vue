@@ -36,12 +36,15 @@
 <script setup>
 import { ref, watch, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { api } from "boot/axios";
+import { api } from "src/boot/axios";
 
 import ProductCart from "src/components/ProductCart.vue";
 
 const router = useRouter();
 const route = useRoute();
+const name = ref("");
+const price = ref("");
+const products = ref([]);
 
 // Initialize category from the query parameter
 const category = ref(route.query.category || null);
@@ -62,11 +65,14 @@ const goPage = () => {
   router.push(`/products`);
 };
 
-const products = ref([]);
-
 onMounted(async () => {
   try {
-    const res = await api.get("/products");
+    const res = await api.get("/products", {
+      params: {
+        name: name.value,
+        price: price.value,
+      },
+    });
     products.value = res.data;
   } catch (err) {
     console.error("Error loading products:", err);
@@ -82,7 +88,6 @@ const filteredProducts = computed(() => {
   );
 });
 
-// List of categories
 const categories = ["pants", "shirts", "socks"];
 </script>
 

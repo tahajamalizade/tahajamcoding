@@ -1,24 +1,38 @@
 <template>
   <q-page>
     <div class="page">
-      <div class="photoSlider">
-        <q-carousel class="photos" animated v-model="slide" thumbnails infinite>
-          <q-carousel-slide :name="1" :img-src="product.image" />
-        </q-carousel>
+      <!-- Check if product is available -->
+      <div v-if="product">
+        <!-- <div class="photoSlider">
+          <q-carousel
+            class="photos"
+            animated
+            v-model="slide"
+            thumbnails
+            infinite
+          >
+            <q-carousel-slide :name="1" :img-src="product.image" />
+          </q-carousel>
+
+        </div> -->
+        <div class="info">
+          <h4 style="margin: 0px">{{ product.name }}</h4>
+          <br />
+          <p>{{ product.info }}</p>
+          <br />
+          <h5 style="margin: 0%">{{ product.price }}</h5>
+          <br />
+          <q-btn
+            align="center"
+            class="btn-fixed-width"
+            label="Add to Checkout"
+            @click="addProductToCart(product)"
+          />
+        </div>
       </div>
-      <div class="info">
-        <h4 style="margin: 0px">{{ product.name }}</h4>
-        <br />
-        <p>{{ product.info }}</p>
-        <br />
-        <h5 style="margin: 0%">{{ product.price }}</h5>
-        <br />
-        <q-btn
-          align="center"
-          class="btn-fixed-width"
-          label="Add to Checkout"
-          @click="addProductToCart(product)"
-        />
+      <!-- Show a fallback message if no product is found -->
+      <div v-else>
+        <p class="text-h4">Product not found!</p>
       </div>
     </div>
   </q-page>
@@ -89,9 +103,8 @@ const addProductToCart = (product) => {
 .page {
   display: flex;
   justify-content: space-evenly;
-  .photos{
+  .photos {
     width: 350px;
-
   }
   .photoSlider {
     width: 600px;

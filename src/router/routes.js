@@ -17,8 +17,14 @@ const routes = [
       { path: "/SignIn", component: () => import("pages/SignIn.vue") },
       {
         path: "/admin",
-        component: () => import("pages/adminPage.vue"),
-        meta: { requiresAdmin: true },
+        component: () => import("pages/AdminPage.vue"),
+        beforeEnter: (to, from, next) => {
+          if (isAuthenticated()) {
+            next();
+          } else {
+            next("/login"); // redirect to login or wherever you want
+          }
+        },
       },
       {
         path: "/profile",
