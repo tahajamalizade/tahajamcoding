@@ -33,7 +33,7 @@
                     dense
                     icon="edit"
                     flat
-                    @click="openUserModal(props.row, props.index)"
+                    @click="openUserModal(props.row, props.rowIndex)"
                   />
                   <q-btn
                     color="red-6"
@@ -220,8 +220,8 @@ const saveUser = async () => {
         _id: users.value[selectedUserIndex.value]._id, // keep _id consistent
       };
 
-      await api.post(
-        `/admin/creatuser/${users.value[selectedUserIndex.value]._id}`,
+      await api.put(
+        `/admin/editUser/${users.value[selectedUserIndex.value]._id}`,
         {
           username: userForm.value.username,
           email: userForm.value.email,
@@ -321,7 +321,8 @@ const deleteProduct = async (id) => {
     await api.delete(`/products/${id}`);
     products.value = products.value.filter((product) => product._id !== id);
   } catch (error) {
-    console.error(error);
+    console.error(error)
   }
 };
 </script>
+
