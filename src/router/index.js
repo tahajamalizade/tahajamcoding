@@ -21,10 +21,5 @@ export default route(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE)
   })
 
- // Example: check if user is authenticated
-function isAuthenticated() {
-  return !!localStorage.getItem('auth'); // or check your auth logic
-}
-
   return Router
 })

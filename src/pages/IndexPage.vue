@@ -113,7 +113,7 @@ body.body--dark {
 
   .title {
     color: #f0f0f0;
-    background-color: #121212ec;
+    background-color: #121212ec ;
 
     h4 {
       color: inherit;

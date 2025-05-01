@@ -1,164 +1,68 @@
 <template>
-  <div class="cart-page">
-    <h2>Cart</h2>
-    <div class="cart-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Remove</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, index) in cart" :key="item.id">
-            <td class="product-info">
-              <div>
-                <strong>{{ item.name }}</strong>
-                <p>{{ item.color }} | {{ item.size }}</p>
-              </div>
-            </td>
-            <td>
-              <button
-                @click="updateQuantity(index, item.quantity - 1)"
-                :disabled="item.quantity <= 1"
-              >
-                -
-              </button>
-              <span>{{ item.quantity }}</span>
-              <button @click="updateQuantity(index, item.quantity + 1)">
-                +
-              </button>
-            </td>
-            <td>${{ (item.price * item.quantity).toFixed(2) }}</td>
-            <td>
-              <button @click="removeItem(index)" class="remove-btn">
-                Remove
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-
-      <div class="summary">
-        <p><strong>Subtotal:</strong> ${{ subtotal.toFixed(2) }}</p>
-        <p><strong>Discount:</strong> $0.00</p>
-        <p class="grand-total">
-          <strong>Grand Total:</strong> ${{ subtotal.toFixed(2) }}
-        </p>
-        <button class="checkout-btn">Checkout Now</button>
-      </div>
+  <div>
+    <h2>Your Cart</h2>
+    <div v-if="cart.length === 0">Cart is empty</div>
+    <div v-for="(item, index) in cart" :key="item.id">
+      <div>{{ item.name }} - {{ item.price }} x {{ item.quantity }}</div>
+      <q-btn icon="remove" @click="removeItem(index)" />
+      <q-input
+        type="number"
+        v-model.number="item.quantity"
+        @change="updateQuantity(index, item.quantity)"
+        style="width: 100px"
+      />
     </div>
+    <div>Subtotal: {{ subtotal }}</div>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      cart: [
-        {
-          id: 1,
-          name: "Cardigan",
-          color: "Green",
-          size: "M",
-          price: 2500,
-          quantity: 1,
-        },
-        {
-          id: 2,
-          name: "Cahier Leather Shoulder Bag",
-          color: "Grey",
-          size: "",
-          price: 2500,
-          quantity: 1,
-        },
-        {
-          id: 3,
-          name: " Watches",
-          color: "Brown",
-          size: "M",
-          price: 2500,
-          quantity: 1,
-        },
-      ],
-    };
-  },
-  computed: {
-    subtotal() {
-      return this.cart.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0
-      );
-    },
-  },
-  methods: {
-    updateQuantity(index, newQuantity) {
-      if (newQuantity > 0) {
-        this.cart[index].quantity = newQuantity;
-      }
-    },
-    removeItem(index) {
-      this.cart.splice(index, 1);
-    },
-  },
-};
-</script>
+<script setup>
+import { api } from "src/boot/axios";
+import { ref, computed, onMounted } from "vue";
 
-<style scoped>
-.cart-page {
-  width: 80%;
-  margin: auto;
+// Replace this with your auth logic or Vuex/store logic
+const user = JSON.parse(localStorage.getItem("user"))
+
+const cart = ref([]);
+
+onMounted(async () => {
+  await fetchCart();
+});
+
+async function fetchCart() {
+  try {
+    const response = await api.get(`/cart/${user.id}`);
+    cart.value = response.data;
+  } catch (error) {
+    console.error("Error fetching cart data:", error.response?.data || error.message);
+  }
 }
-.cart-container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+
+// async function updateQuantity(index, newQuantity) {
+//   const item = cart.value[index];
+//   if (newQuantity > 0) {
+//     try {
+//       await api.put(`/cart/${userId}/item/item.id`, {
+//         quantity: newQuantity
+//       });
+//       item.quantity = newQuantity;
+//     } catch (error) {
+//       console.error("Error updating quantity:", error.response?.data || error.message);
+//     }
+//   }
+
+
+async function removeItem(index) {
+  const item = cart.value[index];
+  try {
+    await api.delete(`/cart/${userId}/item/${item.id}`);
+    cart.value.splice(index, 1);
+  } catch (error) {
+    console.error("Error removing item:", error.response?.data || error.message);
+  }
 }
-.product-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.product-img {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 5px;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-th,
-td {
-  padding: 10px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-button {
-  padding: 5px 10px;
-  cursor: pointer;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  border-radius: 3px;
-}
-.remove-btn {
-  background-color: #dc3545;
-}
-.checkout-btn {
-  background-color: black;
-  color: white;
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  margin-top: 10px;
-}
-.grand-total {
-  font-size: 18px;
-  font-weight: bold;
-}
-</style>
+
+const subtotal = computed(() =>
+  cart.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
+);
+</script>

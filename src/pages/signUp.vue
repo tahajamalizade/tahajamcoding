@@ -51,63 +51,74 @@
   </q-card>
 </template>
 
+
 <script setup>
 import { ref } from "vue";
 import { api } from "boot/axios";
+import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 
 const $q = useQuasar();
+const router = useRouter();
 const username = ref("");
-const email = ref("");
 const password = ref("");
 const confirm = ref("");
+const email = ref("");
 const isPwd = ref(true);
 
 const signup = async () => {
   if (password.value.length < 8) {
-    $q.notify({ type: "negative", message: "Password must be at least 8 characters long." });
+    $q.notify({
+      type: "negative",
+      message: "Password must be at least 8 characters long.",
+    });
     return;
   }
-
-  if (!confirm.value) {
-    $q.notify({ type: "negative", message: "Please confirm your password." });
-    return;
+  // if (confirm.value === "") {
+  //   $q.notify({
+  //     type: "negative",
+  //     message: "please confirm the password.",
+  //   });
+  // }
+  if (confirm.value === "") {
+    $q.notify({
+      type: "negative",
+      message: "Please confirm the password.",
+    });
+    return; // <- this was missing
   }
 
   if (password.value !== confirm.value) {
-    $q.notify({ type: "negative", message: "Passwords do not match." });
+    $q.notify({
+      type: "negative",
+      message: "Passwords do not match.",
+    });
     return;
   }
 
   try {
-    // 1. Signup the user
-    await api.post("/auth/signup", {
+    const res = await api.post("/auth/signup", {
       username: username.value,
       password: password.value,
       email: email.value,
     });
 
-    // 2. Then login immediately
-    const res = await api.post("/auth/login", {
-      username: username.value,
-      password: password.value,
-    });
+    console.log("response: ", res.data);
 
-    // 3. Save the token to localStorage
     localStorage.setItem("token", res.data.token);
 
     $q.notify({
       type: "positive",
-      message: "Signed up and logged in successfully!",
+      message: "Logged in successfully!",
     });
 
-    // 4. Redirect to home page
     window.location.href = "/";
   } catch (err) {
-    console.error("Signup/Login error:", err);
+    console.error(err);
     $q.notify({
       type: "negative",
-      message: err.response?.data?.message || "Signup/Login failed. Please try again.",
+      message:
+        err.response?.data?.message || "Signup failed. Please try again.",
     });
   }
 };

@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf" style="background-color: #fffaf0">
     <section id="header">
-      <div style="cursor: pointer" clas>
+      <div style="cursor: pointer; justify-content: ">
         <q-btn
           flat
           round
@@ -10,20 +10,27 @@
           padding="20px"
         />
         <router-link class="home" to="/">home</router-link>
+        <q-btn
+          flat
+          v-if="userRole === 'admin'"
+          label="Admin Panel"
+          class="cart"
+          @click="goToAdminPanel"
+          margin="20px"
+        />
       </div>
 
       <div>
         <ul class="navbar">
           <li>
-            <router-link  to="/products">products</router-link>
+            <router-link to="/products">products</router-link>
           </li>
           <li><router-link class="cart" to="/cart">cart</router-link></li>
           <li>
             <router-link class="checkout" to="/checkout">checkout</router-link>
           </li>
           <li v-if="token">
-            <!-- <router-link class="checkout" to="/profile">profile</router-link> -->
-            <q-btn color="secondary" label=" profile">
+            <q-btn flat color="secondary" label=" profile">
               <q-menu auto-close>
                 <q-list style="min-width: 100px">
                   <q-item clickable @click.stop="edit = true">
@@ -78,8 +85,11 @@ import { ref, onMounted } from "vue";
 import { useQuasar, Dark } from "quasar";
 import SignUp from "src/pages/signUp.vue";
 import { useRouter } from "vue-router";
+import { api } from "src/boot/axios";
 const router = useRouter();
 const token = localStorage.getItem("token");
+
+const userRole = ref(null);
 
 const $q = useQuasar();
 
@@ -90,6 +100,8 @@ const edit = ref(false);
 
 const logOut = () => {
   localStorage.removeItem("token");
+  localStorage.removeItem("user");
+
   window.location.href = "/";
 };
 
@@ -102,6 +114,21 @@ onMounted(() => {
   const darkMode = localStorage.getItem("darkMode") === "true";
   Dark.set(darkMode);
 });
+
+const fetchUserRole = async () => {
+  try {
+    const user = JSON.parse(localStorage.getItem("user"));
+    userRole.value = user?.role;
+  } catch (err) {
+    console.error("Failed to fetch user role", err);
+  }
+};
+
+const goToAdminPanel = () => {
+  router.push("/admin");
+};
+
+onMounted(fetchUserRole);
 </script>
 
 <style lang="scss">

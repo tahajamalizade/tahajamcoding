@@ -11,7 +11,7 @@
       <q-separator />
 
       <q-tab-panels v-model="activeTab" animated>
-        <!-- User Management Panel -->
+        <!-- FIXME: User Management Panel -->
         <q-tab-panel name="users">
           <q-card-section>
             <div class="row justify-between items-center">
@@ -33,14 +33,14 @@
                     dense
                     icon="edit"
                     flat
-                    @click="openUserModal(props.row, props.rowIndex)"
+                    @click="openUserModal(props.row, props.index)"
                   />
                   <q-btn
                     color="red-6"
                     dense
                     icon="delete"
                     flat
-                    @click="deleteUser(props.rowIndex)"
+                    @click="deleteUser(props.row._id)"
                   />
                 </q-td>
               </template>
@@ -48,7 +48,7 @@
           </q-card-section>
         </q-tab-panel>
 
-        <!-- Product Management Panel -->
+        <!-- TODO: Product Management Panel -->
         <q-tab-panel name="products">
           <q-card-section>
             <div class="row justify-between items-center">
@@ -77,7 +77,7 @@
                     dense
                     icon="delete"
                     flat
-                    @click="deleteProduct(props.rowIndex)"
+                    @click="deleteProduct(props.row._id)"
                   />
                 </q-td>
               </template>
@@ -95,11 +95,17 @@
         </q-card-section>
 
         <q-card-section>
-          <q-input v-model="userForm.name" label="Name" color="secondary" />
+          <q-input v-model="userForm.username" label="Name" color="secondary" />
           <q-input
             v-model="userForm.email"
             label="Email"
             type="email"
+            color="secondary"
+          />
+          <q-input v-model="userForm.role" label="Role" color="secondary" />
+          <q-input
+            v-model="userForm.password"
+            label="Password"
             color="secondary"
           />
         </q-card-section>
@@ -132,6 +138,17 @@
             type="number"
             color="secondary"
           />
+          <q-input
+            v-model="productForm.category"
+            label="category"
+            color="secondary"
+          />
+          <q-input
+            v-model="productForm.stock"
+            label="stock"
+            type="number"
+            color="secondary"
+          />
         </q-card-section>
 
         <q-card-actions align="right">
@@ -144,64 +161,108 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { api } from "src/boot/axios";
+import { onMounted, ref } from "vue";
+import { useQuasar } from "quasar";
+
+const $q = useQuasar();
 
 const activeTab = ref("users");
 
+const products = ref([]);
+
+const users = ref([]);
+
 // ===== USERS =====
-const users = ref([
-  { id: 1, name: "taha jam", email: "jam@example.com" },
-  { id: 2, name: "agha abolfazl", email: "agha@example.com" },
-]);
 
 const isUserModalOpen = ref(false);
 const isUserEdit = ref(false);
-const userForm = ref({ name: "", email: "" });
+const userForm = ref({ username: "", email: "", password: "", role: "" });
 const selectedUserIndex = ref(null);
 
 const userColumns = [
-  { name: "name", label: "Name", field: "name", align: "left" },
+  { name: "username", label: "Name", field: "username", align: "left" },
   { name: "email", label: "Email", field: "email", align: "left" },
+  { name: "role", label: "Role", field: "role", align: "left" },
   { name: "actions", label: "Actions", field: "actions", align: "right" },
 ];
+
+onMounted(async () => {
+  try {
+    const res = await api.get("/admin/getalluser", {});
+
+    res.data.sort((a, b) => {
+      if (a.role === "admin" && b.role !== "admin") return -1;
+      if (a.role !== "admin" && b.role === "admin") return 1;
+      return 0; // keep original order for same role
+    });
+
+    users.value = res.data;
+  } catch (err) {
+    console.error("Error loading user:", err);
+  }
+});
 
 function openUserModal(user = null, index = null) {
   isUserEdit.value = !!user;
   selectedUserIndex.value = index;
-  userForm.value = user ? { ...user } : { name: "", email: "" };
+  userForm.value = user
+    ? { ...user }
+    : { username: "", email: "", password: "", role: "" };
   isUserModalOpen.value = true;
 }
 
-function saveUser() {
-  if (isUserEdit.value) {
-    users.value[selectedUserIndex.value] = {
-      ...userForm.value,
-      id: users.value[selectedUserIndex.value].id,
-    };
-  } else {
-    users.value.push({ ...userForm.value, id: Date.now() });
+const saveUser = async () => {
+  try {
+    if (isUserEdit.value) {
+      users.value[selectedUserIndex.value] = {
+        ...userForm.value,
+        _id: users.value[selectedUserIndex.value]._id, // keep _id consistent
+      };
+
+      await api.post(
+        `/admin/creatuser/${users.value[selectedUserIndex.value]._id}`,
+        {
+          username: userForm.value.username,
+          email: userForm.value.email,
+          role: userForm.value.role,
+          password: userForm.value.password,
+        }
+      );
+    } else {
+      // Add new product locally
+      const newUser = { ...userForm.value };
+      users.value.push(newUser);
+
+      // Make POST request to backend
+      await api.post("/admin/creatUser", newUser);
+    }
+
+    isUserModalOpen.value = false;
+  } catch (err) {
+    console.error(err);
   }
-  isUserModalOpen.value = false;
-}
+};
 
-function deleteUser(index) {
-  users.value.splice(index, 1);
-}
-
-// ===== PRODUCTS =====
-const products = ref([
-  { id: 1, name: "t-shirt", price: 50 },
-  { id: 2, name: "soocks", price: 80 },
-]);
+const deleteUser = async (id) => {
+  try {
+    await api.delete(`/admin/deletUser/${id}`);
+    users.value = users.value.filter((user) => user._id !== id);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const isProductModalOpen = ref(false);
 const isProductEdit = ref(false);
-const productForm = ref({ name: "", price: null });
+const productForm = ref({ name: "", price: null, stock: null, category: "" });
 const selectedProductIndex = ref(null);
 
 const productColumns = [
   { name: "name", label: "Product Name", field: "name", align: "left" },
   { name: "price", label: "Price", field: "price", align: "left" },
+  { name: "category", label: "category", field: "category", align: "left" },
+  { name: "stock", label: "stock", field: "stock", align: "left" },
   { name: "actions", label: "Actions", field: "actions", align: "right" },
 ];
 
@@ -212,19 +273,55 @@ function openProductModal(product = null, index = null) {
   isProductModalOpen.value = true;
 }
 
-function saveProduct() {
-  if (isProductEdit.value) {
-    products.value[selectedProductIndex.value] = {
-      ...productForm.value,
-      id: products.value[selectedProductIndex.value].id,
-    };
-  } else {
-    products.value.push({ ...productForm.value, id: Date.now() });
+onMounted(async () => {
+  try {
+    const res = await api.get("/products", {});
+    products.value = res.data;
+  } catch (err) {
+    console.error("Error loading products:", err);
   }
-  isProductModalOpen.value = false;
-}
+});
 
-function deleteProduct(index) {
-  products.value.splice(index, 1);
-}
+const saveProduct = async () => {
+  try {
+    if (isProductEdit.value) {
+      // Update local array
+      products.value[selectedProductIndex.value] = {
+        ...productForm.value,
+        _id: products.value[selectedProductIndex.value]._id, // keep _id consistent
+      };
+
+      // Make PUT/PATCH request to update backend
+      await api.put(
+        `/products/${products.value[selectedProductIndex.value]._id}`,
+        {
+          name: productForm.value.name,
+          price: productForm.value.price,
+          category: productForm.value.category,
+          stock: productForm.value.stock,
+        }
+      );
+    } else {
+      // Add new product locally
+      const newProduct = { ...productForm.value, id: Date.now() };
+      products.value.push(newProduct);
+
+      // Make POST request to backend
+      await api.post("/products/create", newProduct);
+    }
+
+    isProductModalOpen.value = false;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const deleteProduct = async (id) => {
+  try {
+    await api.delete(`/products/${id}`);
+    products.value = products.value.filter((product) => product._id !== id);
+  } catch (error) {
+    console.error(error);
+  }
+};
 </script>

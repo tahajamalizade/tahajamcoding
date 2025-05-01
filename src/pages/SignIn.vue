@@ -41,11 +41,17 @@
         type="password"
         input-style="background-color: white; border-radius: 8px"
       /> -->
-      <br>
-      <q-input color="green-8" v-model="username" label="youname" filled >
+      <br />
+      <q-input color="green-8" v-model="username" label="youname" filled>
       </q-input>
-      <br>
-      <q-input color="green-8" v-model="password" label="password" filled :type="isPwd ? 'password' : 'text'">
+      <br />
+      <q-input
+        color="green-8"
+        v-model="password"
+        label="password"
+        filled
+        :type="isPwd ? 'password' : 'text'"
+      >
         <template v-slot:append>
           <q-icon
             :name="isPwd ? 'visibility_off' : 'visibility'"
@@ -54,7 +60,7 @@
           />
         </template>
       </q-input>
-<!--
+      <!--
       <q-input color="green-8" v-model="confirmPassword" label="confirm your Password" filled :type="isPwd ? 'password' : 'text'">
         <template v-slot:append>
           <q-icon
@@ -88,7 +94,7 @@ const router = useRouter();
 const username = ref("");
 const name = ref("");
 const password = ref("");
-const isPwd = ref(true)
+const isPwd = ref(true);
 
 const login = async () => {
   if (!username.value || !password.value) {
@@ -107,8 +113,6 @@ const login = async () => {
     return;
   }
 
-
-
   try {
     const res = await api.post("/auth/login", {
       username: username.value, // ✅ try this
@@ -116,6 +120,7 @@ const login = async () => {
     });
 
     localStorage.setItem("token", res.data.token);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
 
     $q.notify({
       type: "positive",

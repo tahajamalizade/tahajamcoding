@@ -1,7 +1,6 @@
 <template>
   <q-page>
     <div class="page">
-      <!-- Check if product is available -->
       <div v-if="product">
         <!-- <div class="photoSlider">
           <q-carousel
@@ -19,6 +18,7 @@
           <h4 style="margin: 0px">{{ product.name }}</h4>
           <br />
           <p>{{ product.info }}</p>
+
           <br />
           <h5 style="margin: 0%">{{ product.price }}</h5>
           <br />
@@ -26,7 +26,7 @@
             align="center"
             class="btn-fixed-width"
             label="Add to Checkout"
-            @click="addProductToCart(product)"
+            @click="addToCart(product)"
           />
         </div>
       </div>
@@ -39,64 +39,46 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
+import { api } from "src/boot/axios";
 
 const route = useRoute();
+
 const slide = ref(1);
 
-const products = ref([
-  {
-    id: 1,
-    name: "Jeans",
-    price: "$10",
-    image: "../src/assets/jeans.jpeg",
-    info: "Great jeans!",
-  },
-  {
-    id: 2,
-    name: "T-shirt",
-    price: "$20",
-    image: "../src/assets/T-shirt.jpeg",
-    info: "Comfortable!",
-  },
-  {
-    id: 3,
-    name: "Shirt",
-    price: "$40",
-    image: "../src/assets/shirt.jpeg",
-    info: "Formal & casual",
-  },
-  {
-    id: 4,
-    name: "Gloves",
-    price: "$50",
-    image: "../src/assets/gloves.jpeg",
-    info: "Warm & stylish",
-  },
-  {
-    id: 5,
-    name: "Socks",
-    price: "$50",
-    image: "../src/assets/socks.jpeg",
-    info: "Soft & cozy",
-  },
-]);
+const product = ref("");
 
-const product = computed(() =>
-  products.value.find((p) => p.id === Number(route.params.id))
-);
+onMounted(async () => {
+  try {
+    const res = await api.get(`/products/${route.params.id}`);
+    product.value = res.data;
+  } catch (err) {
+    console.error("Error loading products:", err);
+  }
+});
 
 const cart = ref([]);
 
-const addProductToCart = (product) => {
-  const existingProduct = cart.value.find((item) => item.id === product.id);
-  if (existingProduct) {
-    existingProduct.quantity++;
-  } else {
-    cart.value.push({ ...product, quantity: 1 });
+async function addToCart(product) {
+  try {
+    // Send the product data to the backend API to add to the cart
+    const user = JSON.parse(localStorage.getItem("user"));
+    console.log("user: ", user);
+    const response = await api.post(`/cart/add`, {
+      userId: user.id,
+      productId: product._id, // Product ID
+      quantity: 1,
+    });
+
+    // Optionally, you can also update the UI or show a success message
+    console.log("Product added to cart:", response.data);
+  } catch (error) {
+    console.error("Error adding product to cart:", error);
   }
-};
+}
+
+localStorage.setItem("cart", JSON.stringify(cart));
 </script>
 
 <style lang="scss">

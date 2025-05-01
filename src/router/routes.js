@@ -15,17 +15,7 @@ const routes = [
       { path: "/cart", component: () => import("pages/CartPage.vue") },
       { path: "/checkout", component: () => import("pages/CheckOut.vue") },
       { path: "/SignIn", component: () => import("pages/SignIn.vue") },
-      {
-        path: "/admin",
-        component: () => import("pages/AdminPage.vue"),
-        beforeEnter: (to, from, next) => {
-          if (isAuthenticated()) {
-            next();
-          } else {
-            next("/login"); // redirect to login or wherever you want
-          }
-        },
-      },
+      { path: "/admin", component: () => import("pages/adminPage.vue") },
       {
         path: "/profile",
         component: () => import("src/components/profilePage.vue"),

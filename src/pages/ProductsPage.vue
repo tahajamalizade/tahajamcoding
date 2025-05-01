@@ -42,8 +42,8 @@ import ProductCart from "src/components/ProductCart.vue";
 
 const router = useRouter();
 const route = useRoute();
-const name = ref("");
-const price = ref("");
+  const name = ref("");
+  const price = ref("");
 const products = ref([]);
 
 // Initialize category from the query parameter

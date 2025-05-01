@@ -1,5 +1,5 @@
 <template>
-  <q-card class="my-card" @click="goToPage(product.id)">
+  <q-card class="my-card" @click="goToPage(product._id)">
     <img class="image" :src="product.image" />
 
     <q-card-section>
@@ -13,6 +13,7 @@
 <script setup>
 import { ref, defineProps } from "vue";
 import { useRouter } from "vue-router";
+import { api } from "boot/axios";
 
 const props = defineProps({
   product: {
